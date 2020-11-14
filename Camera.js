@@ -250,17 +250,28 @@ function setup() {
     context.fill();
 }
 
+    
+    var Rstart = 50.0;
+	var Rslope = 25.0;
+	var spiral = function(t) {
+	    var R = Rslope * t + Rstart;
+	    var x = R * Math.cos(2.0 * Math.PI * t);
+	    var y = R * Math.sin(2.0 * Math.PI * t);
+	    return [x,y];
+	}
+    
 
-    function drawTrajectory(t_begin,t_end,intervals,C,Tx,color) {
+	function trajectory(t_begin,t_end,intervals,C,Tx,color) {
 	    context.strokeStyle=color;
 	    context.beginPath();
-        moveToTx(C(t_begin),Tx);
-        for(var i=1;i<=intervals;i++){
-            var t=((intervals-i)/intervals)*t_begin+(i/intervals)*t_end;
-            lineToTx(C(t),Tx);
-        }
-        context.stroke();
+            moveToTx(C(t_begin),Tx);
+            for(var i=1;i<=intervals;i++){
+		var t=((intervals-i)/intervals)*t_begin+(i/intervals)*t_end;
+		lineToTx(C(t),Tx);
+            }
+            context.stroke();
 	}
+
    // create two lookAt transforms; one for the camera
     // and one for the "external observer"
 
@@ -280,10 +291,8 @@ function setup() {
       
     // Create ViewPort transform (assumed the same for both canvas instances)
     var Tviewport = mat4.create();
-	mat4.fromTranslation(Tviewport,[200,300,0]);  // Move the center of the
-                                                  // "lookAt" transform (where
-                                                  // the camera points) to the
-                                                  // canvas coordinates (200,300)
+	mat4.fromTranslation(Tviewport,[200,300,0]);  
+    
 	mat4.scale(Tviewport,Tviewport,[100,-100,1]); // Flip the Y-axis,
              
     
@@ -331,17 +340,51 @@ function setup() {
     mat4.invert(TlookFromCamera,TlookAtCamera);
     mat4.multiply(tVP_PROJ_VIEW_MOD2_Observer, tVP_PROJ_VIEW_MOD2_Observer, TlookFromCamera);
 
- 
+ //BEGIN
     //draws the axes in the camera window
     context = cameraContext;
-    draw2DAxes("red", mat4.create());
-	draw3DAxes("green",tVP_PROJ_VIEW_Camera,100.0);
-    //This draws the red and blue parts of the curve
-	drawTrajectory(0.0,1.0,100,C0,tVP_PROJ_VIEW_Camera,"red");
-    drawTrajectory(0.0,1.0,100,C1,tVP_PROJ_VIEW_Camera,"blue");
-    drawStar(10, 0, 5, 30, 15, "orange", "yellow", tVP_PROJ_VIEW_MOD_Camera,100.0);
+    draw3DAxes("grey",tVP_PROJ_VIEW_Camera,100.0);
     
-    //drawObject("green",tVP_PROJ_VIEW_MOD_Camera,100.0);
+    drawStar(70, 60, 5, 30, 15, "orange", "yellow", tVP_PROJ_VIEW_MOD_Camera, 1 );
+    
+    //outer stars
+    drawStar(170, 10, 5, 0, 15, "#ffcf40", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(29, 140, 5, 0, 15, "#ffbf00", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(190, 150, 5, 0, 15, "#ffbf00", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(0, -50, 5, 0, 15, "#bf9b30", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(-80, 50, 5, 0, 15, "yellow", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    
+    //center stars
+    drawStar(110, 220, 5, 0, 15, "#bf9b30", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(110, 120, 5, 0, 15, "yellow", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(250, 100, 5, 0, 15, "#ffdc73", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(-80, 140, 5, 0, 15, "#ffcf40", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    
+    
+  ///END 
+    
+  
+    
+    // Draw the following in the Observer window
+    context = observerContext;
+	draw3DAxes("grey",tVP_PROJ_VIEW_Observer,100.0);  
+
+    drawStar(10, 0, 5, 30, 15, "orange", "yellow", tVP_PROJ_VIEW_MOD_Camera,1);
+    drawCamera("purple",tVP_PROJ_VIEW_MOD2_Observer,10.0); 
+	drawUVWAxes("purple",tVP_PROJ_VIEW_MOD2_Observer,100.0);  
+    
+   drawStar(170, 10, 5, 0, 15, "#ffcf40", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(29, 140, 5, 0, 15, "#ffbf00", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(190, 150, 5, 0, 15, "#ffbf00", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(0, -50, 5, 0, 15, "#bf9b30", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(-80, 50, 5, 0, 15, "yellow", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    
+    //center stars
+    drawStar(110, 220, 5, 0, 15, "#bf9b30", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(110, 120, 5, 0, 15, "yellow", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(250, 100, 5, 0, 15, "#ffdc73", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    drawStar(-80, 140, 5, 0, 15, "#ffcf40", "#3c1c31", tVP_PROJ_VIEW_MOD_Camera, 1);
+    
     
     
     
@@ -355,5 +398,4 @@ function setup() {
 }
 window.onload = setup;
 
-    
     
